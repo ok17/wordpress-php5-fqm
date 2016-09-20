@@ -2,34 +2,58 @@ server {
     listen       80;
     server_name  xxxxx;
 
-    #charset koi8-r;
-    access_log  /var/log/nginx/onetop-wp.local.access.log  main;
-    error_log  /var/log/nginx/onetop-wp.local.error.log  warn;
+    access_log  /var/log/nginx/xxxxx.local.access.log  main;
+    error_log  /var/log/nginx/xxxxx.local.error.log  warn;
 
     root   /var/www/html;
     index  index.html index.htm index.php;
 
-    #error_page  404              /404.html;
+    set $do_not_cache 0;
+    if ($http_cookie ~* "comment_author _|wordpress_(?!test_cookie)|wp-postpass_" ) {
+        set $doc_not_cache 1;
+    }
 
-    # redirect server error pages to the static page /50x.html
-    #
-    #error_page   500 502 503 504  /50x.html;
-    #location = /50x.html {
-    #    root   /usr/share/nginx/html;
-    #}
-    # proxy the PHP scripts to Apache listening on 127.0.0.1:80
-    #
-    #location ~ \.php$ {
-    #    proxy_pass   http://127.0.0.1;
-    #}
+    if ($request_method = POST) {
+        set $do_not_cache 0;
+    }
 
-    #location /wp-admin/ { proxy_pass http://admin; }
-    #location /wp-includes/ { proxy_pass http://admin; }
-    #location /wp-login.php { proxy_pass http://admin; }
-    #location ~ .*\.php { proxy_pass http://backend; }
+    location ~* \.php$ {
+        proxy_pass http://localhost:8080;
+    }
+
+    location / {
+        try_files $uri @app;
+    }
+
+    location @app {
+        proxy_no_cache       $do_not_cache;
+        proxy_cache_bypass   $do_not_cache;
+        proxy_cache          czone;
+        proxy_cache_valid    200 5m;
+        proxy_pass http://localhost:8080;
+
+    }
+#    location / {
+#        charset utf-8;
+#        include global/restrictions.conf;
+#        include global/wordpress.conf;
+#    }
+}
+
+server {
+    listen 8080;
+    index  index.html index.htm index.php;
+    server_name  localhost;
+
+    root   /var/www/html;
+
+    access_log  /var/log/nginx/xxxxx-wp-8080.local.access.log  main;
+    error_log  /var/log/nginx/xxxxx-wp-8080.local.error.log  warn;
+
     location / {
         charset utf-8;
         include global/restrictions.conf;
         include global/wordpress.conf;
     }
+
 }

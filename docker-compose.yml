@@ -29,6 +29,7 @@
       - /path/to/project/docker/data/nginx/conf.d/:/etc/nginx/conf.d/
       - /path/to/project/docker/data/nginx/sites-available/:/etc/nginx/sites-available/
       - /path/to/project/docker/data/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - /path/to/project/docker/data/nginx/proxy_params:/etc/nginx/proxy_params
       - /path/to/project/docker/data/nginx/global/:/etc/nginx/global/
 
 
