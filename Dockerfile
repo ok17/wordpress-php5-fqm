@@ -11,6 +11,7 @@ RUN apt-get clean && \
     apt-get install -y php5-gd php5-curl git php5-fpm php5-xdebug && \
     apt-get install -y nginx
 
+RUN mkdir -p /var/cache/nginx/proxy_cache
 ADD docker/data/www.conf /etc/php5/fpm/pool.d/
 ADD docker/data/php.ini /etc/php5/fpm/
 ADD docker/data/start.sh /etc/
